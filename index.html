@@ -26,7 +26,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
@@ -45,24 +45,30 @@
             height: auto;
             object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: transform 0.3s ease;
-        }
-
-        .header-logo:hover {
-            transform: scale(1.05);
+            transition: none;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
         }
 
         .title-container {
             flex: 2;
             text-align: center;
-            color: white;
+            color: #2563eb;
         }
 
         .main-title {
             font-size: 2.5rem;
             font-weight: bold;
             margin: 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             letter-spacing: 1px;
         }
 
@@ -70,7 +76,6 @@
             font-size: 1.8rem;
             font-weight: 600;
             margin: 5px 0 0 0;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             letter-spacing: 0.5px;
         }
 
@@ -510,17 +515,17 @@
         </div>
     </header>
     
-    <div class="d_infos" style="margin-top: -20px;">
+    <div class="d_infos">
         <div class="connection-status">
             <div id="connection-dot" class="status-dot"></div>
             <span id="connection-status">Connexion...</span>
         </div>
-        <div id="date" style="font-weight: bold;">
+        <div id="date">
             Chargement de la date...
         </div>
     </div>
 
-    <div class="container" style="margin-top: -20px;">
+    <div class="container">
         <!-- Current Sensor Data Cards -->
         <section class="grid grid-sensors">
             <div class="card">
