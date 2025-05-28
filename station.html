@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Météo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .header{
+            display: flex;
+            justify-content: space-between;
+            padding: 0px 50px;
+        }
+
+        .d_infos{
+            padding: 0px 50px;
+            width: 300px;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+        }
+
+        .title {
+            font-weight: bold;
+            color: green;
+        }
+
+        @media (min-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .grid-sensors {
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 640px) {
+            .grid-sensors {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-sensors {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            padding: 0.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1);
+        }
+
+        .icon-blue { background-color: #dbeafe; color: #2563eb; }
+        .icon-emerald { background-color: #d1fae5; color: #059669; }
+        .icon-purple { background-color: #e9d5ff; color: #7c3aed; }
+        .icon-orange { background-color: #fed7aa; color: #ea580c; }
+        .icon-red { background-color: #fecaca; color: #dc2626; }
+        .icon-indigo { background-color: #e0e7ff; color: #4f46e5; }
+
+        .card-content h3 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-content p {
+            font-size: 1.875rem;
+            font-weight: bold;
+        }
+
+        .text-blue { color: #1d4ed8; }
+        .text-emerald { color: #047857; }
+        .text-purple { color: #6d28d9; }
+        .text-orange { color: #c2410c; }
+        .text-red { color: #b91c1c; }
+        .text-indigo { color: #3730a3; }
+
+        .chart-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 3rem;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+
+        .chart-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .chart-button {
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chart-button.active {
+            background-color: #2563eb;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-button:not(.active) {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .chart-button:not(.active):hover {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        .chart-container {
+            height: 400px;
+            position: relative;
+        }
+
+        .weather-viz {
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            color: white;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .weather-viz h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .weather-viz h2 {
+                font-size: 1.875rem;
+            }
+        }
+
+        .weather-icon {
+            width: 8rem;
+            height: 8rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+        }
+
+        .weather-icon.raining {
+            animation: bounce-slow 3s infinite ease-in-out;
+        }
+
+        .weather-icon.clear {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .weather-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        @media (min-width: 768px) {
+            .weather-text {
+                font-size: 1.25rem;
+            }
+        }
+
+        .data-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-emerald {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-emerald:hover {
+            background-color: #059669;
+        }
+
+        .btn-red {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-blue {
+            background-color: #9e53f3;
+            color: white;
+        }
+
+        .btn-red:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-gray {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-gray:hover {
+            background-color: #d1d5db;
+        }
+
+        .table-container {
+            overflow-y: auto;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            max-height: 400px;
+            border: 1px solid #e5e7eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+            color: #111827;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: red;
+            transition: background-color 0.3s ease;
+        }
+
+        .status-dot.connected {
+            background-color: green;
+        }
+
+        .real-data-indicator {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .simulated-data-indicator {
+            font-size: 0.75rem;
+            color: #f59e0b;
+            font-style: italic;
+        }
+
+        .disconnected-display {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div><h5><img style="width: 20vw; margin-top: -43px;" src="img/GloWatch-removebg-preview.png" alt=""></h5></div>
+        <div class="title" style="margin-top: 30px; text-align: center;">
+            <h5>Station</h5>
+            <h5 style="margin-top: -20px;">Pluvio-météorologique</h5>
+        </div>
+        <div class="title"><h5><img style="width: 20vw; margin-top: -10px;" src="img/Casur_tech-removebg-preview.png" alt=""></h5></div>
+    </header>
+    
+    <div class="d_infos" style="margin-top: -20px;">
+        <div class="connection-status">
+            <div id="connection-dot" class="status-dot"></div>
+            <span id="connection-status">Déconnecté</span>
+        </div>
+        <div id="date" style="font-weight: bold;">
+            Chargement de la date...
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: -20px;">
+        <!-- Current Sensor Data Cards -->
+        <section class="grid grid-sensors">
+            <div class="card">
+                <div class="card-icon icon-blue">
+                    <i class="fa-solid fa-temperature-half"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Température</h3>
+                    <p class="text-blue" id="temp-value">--°C</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-emerald">            
+                    <i class="fa-solid fa-droplet"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Humidité relative</h3>
+                    <p class="text-emerald" id="humidity-value">--%</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-purple">
+                    <i class="fa-solid fa-cloud-rain"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Précipitation</h3>
+                    <p class="text-purple" id="rain-quantity-value">--mm</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-orange">
+                    <i class="fa-solid fa-cloud-showers-heavy"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Cumul de précipitations</h3>
+                    <p class="text-orange" id="cumulative-value">--mm</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-red">
+                    <i class="fa-solid fa-cloud"></i>
+                </div>
+                <div class="card-content">
+                    <h3>État pluie</h3>
+                    <p class="text-red" id="rain-status-value">--</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-indigo">
+                    <i class="fa-solid fa-cloud-bolt"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Intensité de pluie</h3>
+                    <p class="text-indigo" id="rain-intensity-value">--mm/h</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-purple">
+                    <i class="fa-solid fa-wind"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Vitesse du vent</h3>
+                    <p class="text-purple" id="wind-speed-value">--km/h</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-indigo">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Direction du vent</h3>
+                    <p class="text-indigo" id="wind-direction-value">--</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon icon-orange">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Pression atmosphérique</h3>
+                    <p class="text-orange" id="pressure-value">--hPa</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Weather Visualization -->
+        <section class="weather-viz">
+            <h2>Visualisation Météo Actuelle</h2>
+            <div class="weather-icon" id="weather-icon">☁️</div>
+            <p class="weather-text" id="weather-text">Chargement...</p>
+        </section>
+
+        <!-- Chart Section -->
+        <section class="chart-section">
+            <h2 class="chart-title">Historique des Données</h2>
+            <div class="chart-buttons">
+                <button class="chart-button active" data-metric="temperature">Température</button>
+                <button class="chart-button" data-metric="humidity">Humidité</button>
+                <button class="chart-button" data-metric="rainQuantity">Précipitation</button>
+                <button class="chart-button" data-metric="cumulativePrecipitation">Cumul Précipitations</button>
+                <button class="chart-button" data-metric="rainIntensity">Intensité Pluie</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="dataChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Data Management -->
+        <section class="data-section">
+            <h2 class="section-title">Gestion des Données Historiques</h2>
+            <div class="button-group">
+                <button class="btn btn-emerald" onclick="exportToExcel()">
+                    <i class="fa-solid fa-file-excel"></i>
+                    Exporter Excel
+                </button>
+                <button class="btn btn-red" onclick="exportToPDF()">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    Exporter PDF
+                </button>
+                <button class="btn btn-blue" onclick="exportToCSV()">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    Exporter CSV
+                </button>
+                <button class="btn btn-gray" onclick="resetData()">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Réinitialiser les données
+                </button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Heure</th>
+                            <th>Température</th>
+                            <th>Humidité</th>
+                            <th>Pluie (mm)</th>
+                            <th>Cumul (mm)</th>
+                            <th>Pluie ?</th>
+                            <th>Intensité (mm/h)</th>
+                            <th>Pression</th>
+                            <th>Vent (km/h)</th>
+                            <th>Direction Vent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div style="text-align: center;">
+           Copyright &copy; 2025 Casur Technologies
+        </div>
+    </div>
+
+<script>
+    // Global variables
+    let currentSensorData = {};
+    let historicalData = [];
+    let selectedMetric = 'temperature';
+    let chart = null;
+    let socket = null;
+    let isConnected = false;
+    let cumulativePrecipitation = 0;
+    let lastUpdateTime = null;
+    const DATA_INTERVAL_MINUTES = 5; // Intervalle entre les mesures
+
+    // WebSocket Configuration
+    const WEBSOCKET_URL = 'https://server-cassur.onrender.com'; // À remplacer par votre URL
+
+    // Fonction pour simuler intelligemment les données manquantes
+    function simulateBasedOnRealData(realData) {
+        const { temperature, humidity, rainQuantity } = realData;
+        
+        // Simulation de la pression basée sur la température et l'humidité
+        // Pression normale: 1013 hPa, varie selon température et humidité
+        let pressure = 1013;
+        if (temperature < 10) pressure += 5; // Haute pression par temps froid
+        if (temperature > 25) pressure -= 3; // Basse pression par temps chaud
+        if (humidity > 80) pressure -= 7; // Basse pression par forte humidité
+        if (rainQuantity > 0) pressure -= 10; // Basse pression s'il pleut
+        pressure = Math.max(980, Math.min(1040, pressure + (Math.random() - 0.5) * 4));
+
+        // Simulation du vent basée sur les conditions météo
+        let baseWindSpeed = 5; // Vent de base
+        if (rainQuantity > 0) baseWindSpeed += 10; // Plus de vent s'il pleut
+        if (pressure < 1000) baseWindSpeed += 8; // Plus de vent si basse pression
+        if (temperature > 30) baseWindSpeed += 5; // Plus de vent par forte chaleur
+        let windSpeed = Math.max(0, baseWindSpeed + (Math.random() - 0.5) * 10);
+
+        // Direction du vent influencée par la pression
+        const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        let windDirection;
+        if (pressure > 1020) {
+            // Haute pression -> vents du nord/est
+            windDirection = windDirections[Math.floor(Math.random() * 4)];
+        } else if (pressure < 995) {
+            // Basse pression -> vents du sud/ouest
+            windDirection = windDirections[4 + Math.floor(Math.random() * 4)];
+        } else {
+            windDirection = windDirections[Math.floor(Math.random() * 8)];
+        }
+
+        return {
+            pressure: Math.round(pressure * 10) / 10,
+            windSpeed: Math.round(windSpeed * 10) / 10,
+            windDirection: windDirection
+        };
+    }
+
+    // Fonction pour calculer les données dérivées
+    function calculateDerivedData(rainQuantity) {
+        // Calcul du cumul
+        if (rainQuantity > 0) {
+            cumulativePrecipitation += rainQuantity;
+        }
+
+        // État de la pluie et indicateur
+        let rainStatus, indicateur;
+        if (rainQuantity === 0) {
+            rainStatus = 'Non';
+            indicateur = 'pdp';
+        } else if (rainQuantity <= 1.5) {
+            rainStatus = 'Oui';
+            indicateur = 'pl';
+        } else if (rainQuantity <= 5) {
+            rainStatus = 'Oui';
+            indicateur = 'pm';
+        } else {
+            rainStatus = 'Oui';
+            indicateur = 'fp';
+        }
+
+        // Calcul de l'intensité (mm par intervalle converti en mm/h)
+        const rainIntensity = rainQuantity > 0 ? 
+            Math.round((rainQuantity / (DATA_INTERVAL_MINUTES / 60)) * 10) / 10 : 0;
+
+        return {
+            cumulativePrecipitation: Math.round(cumulativePrecipitation * 10) / 10,
+            rainStatus,
+            indicateur,
+            rainIntensity
+        };
+    }
+
+    // Connexion WebSocket
+    function connectWebSocket() {
+        try {
+            socket = new WebSocket(WEBSOCKET_URL);
+            
+            socket.onopen = function(event) {
+                console.log('WebSocket connecté');
+                isConnected = true;
+                updateConnectionStatus(true);
+            };
+            
+            socket.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('Données reçues:', data);
+                    processSensorData(data);
+                } catch (error) {
+                    console.error('Erreur parsing données WebSocket:', error);
+                }
+            };
+            
+            socket.onclose = function(event) {
+                console.log('WebSocket fermé');
+                isConnected = false;
+                updateConnectionStatus(false);
+                // Tentative de reconnexion après 5 secondes
+                setTimeout(connectWebSocket, 5000);
+            };
+            
+            socket.onerror = function(error) {
+                console.error('Erreur WebSocket:', error);
+                isConnected = false;
+                updateConnectionStatus(false);
+            };
+            
+        } catch (error) {
+            console.error('Erreur connexion WebSocket:', error);
+            isConnected = false;
+            updateConnectionStatus(false);
+            // Tentative de reconnexion après 5 secondes
+            setTimeout(connectWebSocket, 5000);
+        }
+    }
+
+    // Mode démo supprimé - pas de données quand déconnecté
+    // function startDemoMode() supprimée
+
+    // Traitement des données capteurs
+    function processSensorData(realData) {
+        const now = new Date();
+        
+        // Calcul des données dérivées
+        const derivedData = calculateDerivedData(realData.rainQuantity);
+        
+        // Simulation des données manquantes
+        const simulatedData = simulateBasedOnRealData(realData);
+        
+        // Compilation de toutes les données
+        const completeData = {
+            timestamp: now.toISOString(),
+            // Données réelles des capteurs
+            temperature: realData.temperature,
+            humidity: realData.humidity,
+            rainQuantity: realData.rainQuantity,
+            // Données calculées
+            ...derivedData,
+            // Données simulées intelligemment
+            ...simulatedData
+        };
+        
+        currentSensorData = completeData;
+        historicalData.push(completeData);
+        
+        // Limiter l'historique à 50 points
+        if (historicalData.length > 50) {
+            historicalData.shift();
+        }
+        
+        // Mise à jour de l'interface
+        updateCurrentSensorDisplay();
+        updateDataTable();
+        updateChart();
+        
+        lastUpdateTime = now;
+    }
+
+    // Mise à jour du statut de connexion
+    function updateConnectionStatus(connected) {
+        const dot = document.getElementById('connection-dot');
+        const status = document.getElementById('connection-status');
+        const container = document.querySelector('.container');
+        
+        if (connected) {
+            dot.classList.add('connected');
+            status.textContent = 'Connecté';
+            container.classList.remove('disconnected-display');
+        } else {
+            dot.classList.remove('connected');
+            status.textContent = 'Déconnecté';
+            container.classList.add('disconnected-display');
+            
+            // Vider toutes les données quand déconnecté
+            clearAllDisplayedData();
+        }
+    }
+
+    // Vider l'affichage des données
+    function clearAllDisplayedData() {
+        document.getElementById('temp-value').textContent = '--°C';
+        document.getElementById('humidity-value').textContent = '--%';
+        document.getElementById('rain-quantity-value').textContent = '--mm';
+        document.getElementById('cumulative-value').textContent = '--mm';
+        document.getElementById('rain-status-value').textContent = '--';
+        document.getElementById('rain-intensity-value').textContent = '--mm/h';
+        document.getElementById('pressure-value').textContent = '--hPa';
+        document.getElementById('wind-speed-value').textContent = '--km/h';
+        document.getElementById('wind-direction-value').textContent = '--';
+        
+        // Réinitialiser la visualisation météo
+        const weatherIcon = document.getElementById('weather-icon');
+        const weatherText = document.getElementById('weather-text');
+        weatherIcon.textContent = '❌';
+        weatherIcon.className = 'weather-icon';
+        weatherText.textContent = 'Station météo déconnectée';
+        
+        // Vider le tableau
+        const tableBody = document.getElementById('data-table');
+        tableBody.innerHTML = '';
+        
+        // Détruire le graphique
+        if (chart) {
+            chart.destroy();
+            chart = null;
+        }
+    }
+
+    // Mise à jour de l'affichage des capteurs actuels
+    function updateCurrentSensorDisplay() {
+        document.getElementById('date').textContent = new Date().toLocaleString();
+        document.getElementById('temp-value').textContent = `${currentSensorData.temperature}°C`;
+        document.getElementById('humidity-value').textContent = `${currentSensorData.humidity}%`;
+        document.getElementById('rain-quantity-value').textContent = `${currentSensorData.rainQuantity}mm`;
+        document.getElementById('cumulative-value').textContent = `${currentSensorData.cumulativePrecipitation}mm`;
+        document.getElementById('rain-status-value').textContent = currentSensorData.rainStatus;
+        document.getElementById('rain-intensity-value').textContent = `${currentSensorData.rainIntensity}mm/h`;
+        document.getElementById("pressure-value").textContent = `${currentSensorData.pressure} hPa`;
+        document.getElementById("wind-speed-value").textContent = `${currentSensorData.windSpeed} km/h`;
+        document.getElementById("wind-direction-value").textContent = currentSensorData.windDirection;   
+        
+        // Mise à jour de la visualisation météo
+        const weatherIcon = document.getElementById('weather-icon');
+        const weatherText = document.getElementById('weather-text');
+
+        if (currentSensorData.rainStatus === 'Oui') {
+            if(currentSensorData.indicateur === 'pl'){
+                weatherIcon.textContent = '🌦️';
+                weatherIcon.className = 'weather-icon raining';
+                weatherText.textContent = 'Pluie légère détectée';
+            } else if(currentSensorData.indicateur === 'pm'){
+                weatherIcon.textContent = '🌧️';
+                weatherIcon.className = 'weather-icon raining';
+                weatherText.textContent = 'Pluie modérée en cours';
+            } else {
+                weatherIcon.textContent = '⛈️';
+                weatherIcon.className = 'weather-icon raining';
+                weatherText.textContent = 'Forte pluie !';
+            }
+        } else {
+            if (currentSensorData.humidity > 80) {
+                weatherIcon.textContent = '☁️';
+                weatherIcon.className = 'weather-icon clear';
+                weatherText.textContent = 'Temps nuageux, humidité élevée';
+            } else if (currentSensorData.temperature > 25) {
+                weatherIcon.textContent = '☀️';
+                weatherIcon.className = 'weather-icon clear';
+                weatherText.textContent = 'Temps ensoleillé et chaud';
+            } else {
+                weatherIcon.textContent = '⛅';
+                weatherIcon.className = 'weather-icon clear';
+                weatherText.textContent = 'Temps calme, pas de précipitations';
+            }
+        }
+    }
+
+    // Mise à jour du tableau de données
+    function updateDataTable() {
+        const tableBody = document.getElementById('data-table');
+        tableBody.innerHTML = '';
+
+        historicalData.slice().reverse().forEach(data => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${new Date(data.timestamp).toLocaleString()}</td>
+                <td>${data.temperature}°C</td>
+                <td>${data.humidity}%</td>
+                <td>${data.rainQuantity}mm</td>
+                <td>${data.cumulativePrecipitation}mm</td>
+                <td>${data.rainStatus}</td>
+                <td>${data.rainIntensity}mm/h</td>
+                <td>${data.pressure} hPa</td>
+                <td>${data.windSpeed} km/h</td>
+                <td>${data.windDirection}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Informations sur les métriques pour les graphiques
+    function getMetricInfo(metric) {
+        const info = {
+            temperature: { label: 'Température', unit: '°C', color: '#3b82f6' },
+            humidity: { label: 'Humidité', unit: '%', color: '#10b981' },
+            rainQuantity: { label: 'Quantité de Pluie', unit: 'mm', color: '#8b5cf6' },
+            cumulativePrecipitation: { label: 'Cumul Précipitations', unit: 'mm', color: '#f59e0b' },
+            rainIntensity: { label: 'Intensité Pluie', unit: 'mm/h', color: '#6366f1' }
+        };
+        return info[metric] || { label: '', unit: '', color: '#3b82f6' };
+    }
+
+    // Mise à jour du graphique
+    function updateChart() {
+        const ctx = document.getElementById('dataChart').getContext('2d');
+        const metricInfo = getMetricInfo(selectedMetric);
+
+        if (chart) {
+            chart.destroy();
+        }
+        
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: historicalData.map(d => new Date(d.timestamp).toLocaleTimeString()),
+                datasets: [{
+                    label: metricInfo.label,
+                    data: historicalData.map(d => d[selectedMetric]),
+                    borderColor: metricInfo.color,
+                    backgroundColor: metricInfo.color + '20',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: metricInfo.color,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: selectedMetric !== 'temperature',
+                        title: {
+                            display: true,
+                            text: metricInfo.unit
+                        },
+                        grid: {
+                            color: '#f3f4f6'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Heure'
+                        },
+                        grid: {
+                            color: '#f3f4f6'
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        hoverRadius: 8
+                    }
+                }
+            }
+        });
+    }
+
+    // Configuration des boutons du graphique
+    function setupChartButtons() {
+        const buttons = document.querySelectorAll('.chart-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                selectedMetric = button.dataset.metric;
+                updateChart();
+            });
+        });
+    }
+
+    // Fonctions d'exportation
+    function exportToExcel() {
+        const csvContent = generateCSVContent();
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `donnees_meteo_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log('Données exportées en CSV:', historicalData);
+        alert('Données exportées en CSV avec succès !');
+    }
+
+    function exportToPDF() {
+        // Pour une vraie implémentation PDF, vous devriez utiliser une bibliothèque comme jsPDF
+        console.log('Export PDF - Données:', historicalData);
+        alert('Fonctionnalité d\'exportation PDF à implémenter avec une bibliothèque comme jsPDF');
+    }
+
+    function exportToCSV() {
+        exportToExcel(); // Même logique que Excel pour le CSV
+    }
+
+    function generateCSVContent() {
+        const headers = [
+            'Heure',
+            'Température (°C)',
+            'Humidité (%)',
+            'Précipitation (mm)',
+            'Cumul Précipitations (mm)',
+            'État Pluie',
+            'Intensité Pluie (mm/h)',
+            'Pression (hPa)',
+            'Vitesse Vent (km/h)',
+            'Direction Vent'
+        ];
+        
+        const rows = historicalData.map(data => [
+            new Date(data.timestamp).toLocaleString(),
+            data.temperature,
+            data.humidity,
+            data.rainQuantity,
+            data.cumulativePrecipitation,
+            data.rainStatus,
+            data.rainIntensity,
+            data.pressure,
+            data.windSpeed,
+            data.windDirection
+        ]);
+        
+        return [headers, ...rows].map(row => row.join(';')).join('\n');
+    }
+
+    // Réinitialisation des données
+    function resetData() {
+        if (!isConnected) {
+            alert('Impossible de réinitialiser : station déconnectée');
+            return;
+        }
+        
+        if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données ?')) {
+            historicalData = [];
+            cumulativePrecipitation = 0;
+            
+            // Le reste sera remis à jour par les prochaines données du serveur
+            alert('Données réinitialisées avec succès !');
+        }
+    }
+
+    // Initialisation du tableau de bord
+    function init() {
+        console.log('Initialisation du dashboard météo...');
+        
+        // Configuration des boutons du graphique
+        setupChartButtons();
+        
+        // Mise à jour de l'heure
+        setInterval(() => {
+            document.getElementById('date').textContent = new Date().toLocaleString();
+        }, 1000);
+        
+        // Initialiser l'état déconnecté
+        updateConnectionStatus(false);
+        
+        // Tentative de connexion WebSocket
+        connectWebSocket();
+        
+        console.log('Dashboard initialisé - En attente de connexion...');
+    }
+
+    // Démarrage à la charge de la page
+    window.addEventListener('load', init);
+
+    // Gestion de la fermeture de la fenêtre
+    window.addEventListener('beforeunload', function() {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
+    });
+</script>
+</body>
+</html>
