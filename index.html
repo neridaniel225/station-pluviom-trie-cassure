@@ -32,9 +32,10 @@
         }
 
         .header-logo {
-            height: 100%;
-            max-height: 500px;
+            max-width: 180px;
+            max-height: 180px;
             width: auto;
+            height: auto;
             object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
             transition: none;
@@ -55,34 +56,20 @@
             flex: 2;
             text-align: center;
             color: #2563eb;
-            height: 80px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
         .main-title {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             margin: 0;
             letter-spacing: 1px;
-            line-height: 1.1;
         }
 
         .sub-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 600;
-            margin: 2px 0 0 0;
+            margin: 5px 0 0 0;
             letter-spacing: 0.5px;
-            line-height: 1.1;
-        }
-
-        .logo-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80px;
         }
 
         @media (max-width: 768px) {
@@ -510,14 +497,14 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="images/GloWatch-removebg-preview.png" alt="Logo 1" class="header-logo" onerror="this.style.display='none'">
+            <img src="images/logo1.png" alt="Logo 1" class="header-logo" onerror="this.style.display='none'">
         </div>
         <div class="title-container">
             <h1 class="main-title">Station</h1>
             <h2 class="sub-title">Pluvio-météorologique</h2>
         </div>
         <div class="logo-container">
-            <img src="images/Casur_tech-removebg-preview.png" alt="Logo 2" class="header-logo" onerror="this.style.display='none'">
+            <img src="images/logo2.png" alt="Logo 2" class="header-logo" onerror="this.style.display='none'">
         </div>
     </header>
     
