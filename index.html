@@ -27,7 +27,7 @@
             align-items: center;
             padding: 20px 50px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
 
@@ -38,173 +38,101 @@
             align-items: center;
         }
 
-        .logo-container img {
-            max-width: 400px;
-            max-height: 200px;
+        .header-logo {
+            max-width: 120px;
+            max-height: 120px;
+            width: auto;
+            height: auto;
             object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
         }
 
-        .logo-container img:hover {
-            transform: scale(3.05);
+        .header-logo:hover {
+            transform: scale(1.05);
         }
 
         .title-container {
-            flex: 1;
+            flex: 2;
             text-align: center;
             color: white;
         }
 
-        .title-container h1 {
-            font-size: 2rem;
+        .main-title {
+            font-size: 2.5rem;
             font-weight: bold;
             margin: 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             letter-spacing: 1px;
         }
 
-        .title-container h2 {
-            font-size: 1.2rem;
-            font-weight: 500;
+        .sub-title {
+            font-size: 1.8rem;
+            font-weight: 600;
             margin: 5px 0 0 0;
-            opacity: 0.9;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .status-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            margin: 0 auto 30px auto;
-            max-width: 400px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            border-radius: 25px;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            transition: all 0.3s ease;
-            min-width: 180px;
-            justify-content: center;
-        }
-
-        .connection-status.connected {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-color: #10b981;
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .connection-status.disconnected {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border-color: #ef4444;
-            color: white;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .connection-status.connecting {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            border-color: #f59e0b;
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #ef4444;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-            animation: pulse-dot 2s infinite;
-        }
-
-        .status-dot.connected {
-            background-color: #10b981;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-            animation: none;
-        }
-
-        .status-dot.connecting {
-            background-color: #f59e0b;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-            animation: pulse-dot 1s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { 
-                transform: scale(1); 
-                opacity: 1; 
-            }
-            50% { 
-                transform: scale(1.2); 
-                opacity: 0.7; 
-            }
-        }
-
-        .status-text {
-            font-weight: 600;
-            font-size: 0.95rem;
-            letter-spacing: 0.5px;
-        }
-
-        .date-display {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 20px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .date-display i {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .date-text {
-            font-size: 0.9rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
-                gap: 20px;
-                padding: 20px;
+                padding: 15px 20px;
+                gap: 15px;
             }
 
             .logo-container {
                 flex: none;
             }
 
-            .title-container h1 {
+            .header-logo {
+                max-width: 80px;
+                max-height: 80px;
+            }
+
+            .title-container {
+                flex: none;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .sub-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 15px;
+            }
+
+            .header-logo {
+                max-width: 60px;
+                max-height: 60px;
+            }
+
+            .main-title {
                 font-size: 1.5rem;
             }
 
-            .title-container h2 {
+            .sub-title {
                 font-size: 1rem;
             }
+        }
 
-            .status-info {
-                margin: 20px auto;
-                max-width: 100%;
-            }
+        .d_infos {
+            padding: 0px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            margin: 0 50px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
+            margin-bottom: 20px;
         }
 
         .container {
@@ -220,7 +148,8 @@
 
         .title {
             font-weight: bold;
-            color: green;
+            color: #2563eb;
+            margin-bottom: 1rem;
         }
 
         @media (min-width: 768px) {
@@ -570,32 +499,28 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="images/GloWatch-removebg-preview.png" alt="Logo Ministère" onerror="this.style.display='none'">
+            <img src="images/GloWatch-removebg-preview.png" alt="Logo 1" class="header-logo" onerror="this.style.display='none'">
         </div>
-        
         <div class="title-container">
-            <h1>Station</h1>
-            <h2>Pluvio-météorologique</h2>
+            <h1 class="main-title">Station</h1>
+            <h2 class="sub-title">Pluvio-météorologique</h2>
         </div>
-        
         <div class="logo-container">
-            <img src="images/Casur_tech-removebg-preview.png" alt="Logo Cassur" onerror="this.style.display='none'">
+            <img src="images/Casur_tech-removebg-preview.png" alt="Logo 2" class="header-logo" onerror="this.style.display='none'">
         </div>
     </header>
     
-    <div class="status-info">
-        <div id="connection-status-container" class="connection-status connecting">
-            <div id="connection-dot" class="status-dot connecting"></div>
-            <span id="connection-status" class="status-text">Connexion...</span>
+    <div class="d_infos" style="margin-top: -20px;">
+        <div class="connection-status">
+            <div id="connection-dot" class="status-dot"></div>
+            <span id="connection-status">Connexion...</span>
         </div>
-        
-        <div class="date-display">
-            <i class="fas fa-calendar-alt"></i>
-            <span id="date" class="date-text">Chargement de la date...</span>
+        <div id="date" style="font-weight: bold;">
+            Chargement de la date...
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" style="margin-top: -20px;">
         <!-- Current Sensor Data Cards -->
         <section class="grid grid-sensors">
             <div class="card">
@@ -844,9 +769,6 @@
         try {
             console.log("Tentative de connexion à https://server-cassur.onrender.com");
             
-            // Afficher l'état de connexion en cours
-            showConnectionAttempt();
-            
             // Utiliser la même URL que le premier dashboard
             socket = io('https://server-cassur.onrender.com', {
                 reconnectionAttempts: 5,
@@ -888,22 +810,14 @@
                 updateConnectionStatus(false);
                 
                 // Tentative de reconnexion après 5 secondes
-                setTimeout(() => {
-                    console.log('Tentative de reconnexion...');
-                    showConnectionAttempt();
-                    connectWebSocket();
-                }, 5000);
+                setTimeout(connectWebSocket, 5000);
             });
             
         } catch (error) {
             console.error('Erreur lors de l\'initialisation Socket.IO:', error);
             isConnected = false;
             updateConnectionStatus(false);
-            setTimeout(() => {
-                console.log('Tentative de reconnexion après erreur...');
-                showConnectionAttempt();
-                connectWebSocket();
-            }, 5000);
+            setTimeout(connectWebSocket, 5000);
         }
     }
 
@@ -943,49 +857,26 @@
         lastUpdateTime = now;
     }
 
-    // Mise à jour du statut de connexion - AMÉLIORÉE
+    // Mise à jour du statut de connexion
     function updateConnectionStatus(connected) {
         const dot = document.getElementById('connection-dot');
         const status = document.getElementById('connection-status');
-        const statusContainer = document.getElementById('connection-status-container');
         const container = document.querySelector('.container');
-        
-        // Supprimer toutes les classes d'état
-        dot.classList.remove('connected', 'connecting', 'disconnected');
-        statusContainer.classList.remove('connected', 'connecting', 'disconnected');
         
         if (connected) {
             dot.classList.add('connected');
-            statusContainer.classList.add('connected');
-            status.textContent = 'Connecté au serveur';
+            status.textContent = 'Connecté';
             container.classList.remove('disconnected-display');
             console.log('Interface mise à jour : Connecté');
         } else {
-            dot.classList.add('disconnected');
-            statusContainer.classList.add('disconnected');
-            status.textContent = 'Serveur déconnecté';
+            dot.classList.remove('connected');
+            status.textContent = 'Déconnecté';
             container.classList.add('disconnected-display');
             
             // Vider toutes les données quand déconnecté
             clearAllDisplayedData();
             console.log('Interface mise à jour : Déconnecté');
         }
-    }
-
-    // Fonction pour afficher l'état de connexion en cours
-    function showConnectionAttempt() {
-        const dot = document.getElementById('connection-dot');
-        const status = document.getElementById('connection-status');
-        const statusContainer = document.getElementById('connection-status-container');
-        
-        // Supprimer toutes les classes d'état
-        dot.classList.remove('connected', 'connecting', 'disconnected');
-        statusContainer.classList.remove('connected', 'connecting', 'disconnected');
-        
-        // Ajouter l'état de connexion en cours
-        dot.classList.add('connecting');
-        statusContainer.classList.add('connecting');
-        status.textContent = 'Connexion en cours...';
     }
 
     // Vider l'affichage des données
@@ -1270,27 +1161,13 @@
         // Configuration des boutons du graphique
         setupChartButtons();
         
-        // Mise à jour de l'heure avec format français
-        function updateDateTime() {
-            const now = new Date();
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            document.getElementById('date').textContent = now.toLocaleDateString('fr-FR', options);
-        }
-        
-        // Mise à jour immédiate puis toutes les secondes
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
+        // Mise à jour de l'heure
+        setInterval(() => {
+            document.getElementById('date').textContent = new Date().toLocaleString('fr-FR');
+        }, 1000);
         
         // Initialiser l'état de connexion
-        showConnectionAttempt();
+        updateConnectionStatus(false);
         
         // Tentative de connexion WebSocket
         connectWebSocket();
